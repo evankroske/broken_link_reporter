@@ -15,7 +15,6 @@ typedef struct {
 
 size_t WriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
   LinkTestData *link_test_data = (LinkTestData *)userp;
-  // printf("%s %s\n", link->source.c_str(), link->href.c_str());
   char *body = (char *)buffer;
   link_test_data->out_source_page.append(body, body + nmemb);
   return size * nmemb;
@@ -31,6 +30,8 @@ int main(int argc, char **argv) {
   std::unique_ptr<char[]> buf(new char[1000]);
   char *page_buf = NULL;
   size_t page_len = 0;
+  long num_links = 0;
+  long num_links_broken = 0;
   while (true) {
     int status = scanf("%999s", buf.get());
     if (status == EOF) {
@@ -45,9 +46,15 @@ int main(int argc, char **argv) {
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, WriteData);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &link);
     CURLcode success = curl_easy_perform(handle);
-    printf("%s\n", link.out_source_page.c_str());
+
+    ++num_links;
+    if (link.out_source_page.find(href) != string::npos) {
+      ++num_links_broken;
+    }
+
     sleep(1);
   }
+  printf("%lu/%lu broken links still present\n", num_links_broken, num_links);
 
   curl_easy_cleanup(handle);
   curl_global_cleanup();
