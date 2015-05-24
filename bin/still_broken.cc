@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
 
 #include <memory>
 #include <string>
@@ -50,9 +49,9 @@ int main(int argc, char **argv) {
     ++num_links;
     if (link.out_source_page.find(href) != string::npos) {
       ++num_links_broken;
+    } else {
+      printf("<li>%s→%s</li>\n", source.c_str(), href.c_str());
     }
-
-    sleep(1);
   }
   printf("%lu/%lu broken links still present\n", num_links_broken, num_links);
 
