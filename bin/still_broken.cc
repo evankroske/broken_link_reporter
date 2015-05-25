@@ -1,15 +1,18 @@
-#include <stdio.h>
+#include <cstdio>
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <curl/curl.h>
 
+using ::std::string;
+
 typedef struct {
-  std::string in_source_url;
-  std::string in_href_url;
-  std::string out_source_page;
+  string in_source_url;
+  string in_href_url;
+  string out_source_page;
 } LinkTestData;
 
 size_t WriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -19,8 +22,27 @@ size_t WriteData(void *buffer, size_t size, size_t nmemb, void *userp) {
   return size * nmemb;
 }
 
+static string HtmlEntityEncode(const string &s) {
+  string escaped;
+  static const std::map<char, string> entity_of{
+    {'&', "&amp;"},
+    {'<', "&lt;"},
+    {'>', "&gt;"},
+    {'"', "&quot;"},
+    {'\'', "&#x27;"},
+    {'/', "&#x2F;"},
+  };
+  for (char c : s) {
+    if (entity_of.count(c) == 1) {
+      escaped.append(entity_of.at(c));
+    } else {
+      escaped.push_back(c);
+    }
+  }
+  return escaped;
+}
+
 int main(int argc, char **argv) {
-  using std::string;
   using std::vector;
 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -50,7 +72,10 @@ int main(int argc, char **argv) {
     if (link.out_source_page.find(href) != string::npos) {
       ++num_links_broken;
     } else {
-      printf("<li>%s→%s</li>\n", source.c_str(), href.c_str());
+      printf(
+          "<li>%s→%s</li>\n",
+          HtmlEntityEncode(source).c_str(),
+          HtmlEntityEncode(href).c_str());
     }
   }
   printf("%lu/%lu broken links still present\n", num_links_broken, num_links);
