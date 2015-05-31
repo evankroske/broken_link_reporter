@@ -1,0 +1,10 @@
+URL: https://googletest.googlecode.com/files/gtest-1.7.0.zip
+Version: 1.7.0
+License: BSD
+License File: LICENSE
+
+Description:
+A framework for writing unit tests in C++.
+
+Local Modifications:
+No modifications.
