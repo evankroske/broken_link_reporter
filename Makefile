@@ -1,3 +1,5 @@
+all: build/still_broken build/broken_link_finder
+
 build/still_broken: src/still_broken.cc
 	mkdir -p build
 	c++ -std=c++14 -lcurl -o build/still_broken src/still_broken.cc
