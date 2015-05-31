@@ -1,6 +1,7 @@
-build/bin/still_broken: bin/still_broken.cc
-	mkdir -p build/bin
-	c++ -std=c++14 -lcurl -o build/bin/still_broken bin/still_broken.cc
+build/still_broken: src/still_broken.cc
+	mkdir -p build
+	c++ -std=c++14 -lcurl -o build/still_broken src/still_broken.cc
 
-run: build/bin/still_broken
-	./build/bin/still_broken < input/broken_links
+build/broken_link_finder: src/broken_link_finder.cc
+	mkdir -p build
+	c++ -std=c++14 -lcurl -o build/broken_link_finder src/broken_link_finder.cc
